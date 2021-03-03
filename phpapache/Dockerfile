@@ -55,5 +55,5 @@ RUN composer global require drush/drush
 #RUN export PATH="\$HOME/.composer/vendor/drush/drush:\$PATH"
 RUN composer create-project drupal/recommended-project:9.1.4 .
 RUN cp web/sites/default/default.settings.php web/sites/default/settings.php && mkdir web/sites/default/files && chmod -R 777 web/sites/default/files/ && chmod 666 web/sites/default/settings.php
-#RUN drush site:install standard --db-url=mysql://root:123456@mariadb/drupal --site-name=maksim-chernyshev --site-mail=maksim.chernyshev@gmail.com --site-name="maksim chernyshev" --account-name=admin  --account-mail=maksim.chernyshev@gmail.com --account-pass=admin -y
+
 
