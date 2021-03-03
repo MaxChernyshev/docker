@@ -1,0 +1,81 @@
+version: "3.9"
+
+networks:
+  mynet:
+
+services:
+
+  ubuntu:
+    build: ./ubuntu
+    container_name: ubuntu
+
+    #  drupal:
+    #    build: ./drupal
+    #
+    #    ports:
+    #      - 9999:80
+    #    container_name: drupal
+    #    restart: always
+    #    ports:
+    #      - 9998:80
+    #    working_dir: ./drupalsite
+    #    environment:
+    #      HOST: $PMA_HOST
+    #      DBASE: $MYSQL_DATABASE
+    #      USER: $MYSQL_USER
+    #      PASS: $MYSQL_PASSWORD
+    #    links:
+    #      - mariadb
+    #    volumes:
+    #      - ./drupalsite/:/var/www/html
+    #    networks:
+    #      - mynet
+    #    command: bash -c "composer update"
+
+
+  php:
+    build: ./phpapache
+    container_name: php
+    ports:
+      - 8081:80
+#      - 443:443
+    volumes:
+      - ./web/:/var/www/html/
+    networks:
+      - mynet
+
+  mariadb:
+    build: ./mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    ports:
+      - 3308:3306
+    depends_on:
+      - php
+    volumes:
+      - ./mariadb/:/var/lib/mysql
+#    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - mynet
+
+  phpmyadmin:
+    build: ./pma
+    container_name: pma
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      PMA_HOST: $PMA_HOST
+      PMA_ARBITRARY: 1
+    volumes:
+      - ./pma/:/var/lib/phpmyadmin
+    networks:
+      - mynet
+    depends_on:
+      - mariadb
